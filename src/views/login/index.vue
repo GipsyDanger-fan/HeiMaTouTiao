@@ -27,7 +27,7 @@
 <script>
 export default {
   name: "app-login",
-  data() {
+  data () {
     const checkMobile = (rule, value, callback) => {
       if (!/^1[3-9]\d{9}$/.test(value)) {
         callback(new Error("手机号码格式错误"));
