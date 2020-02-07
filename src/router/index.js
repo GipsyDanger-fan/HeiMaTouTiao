@@ -9,6 +9,7 @@ import publish from '@/views/publish'
 import comment from '@/views/comment'
 import fans from '@/views/fans'
 import setting from '@/views/setting'
+import NotFound from '@/views/NotFound'
 Vue.use(VueRouter)
 const router = new VueRouter({
   routes: [
@@ -23,7 +24,8 @@ const router = new VueRouter({
         { path: 'fans', component: fans },
         { path: 'setting', component: setting }
       ]
-    }
+    },
+    { path: '*', component: NotFound }
   ]
 })
 export default router
