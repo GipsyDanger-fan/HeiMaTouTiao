@@ -81,12 +81,9 @@ export default {
       this.isOpen = !this.isOpen;
     },
     handleCommand(command) {
-      if (command == "logout") {
-        auth.delUser();
-        this.$router.push("/login");
-        return;
-      }
-      this.$router.push("/setting");
+      if (command == "setting") return this.$router.push("/setting");
+      auth.delUser();
+      this.$router.push("/login");
     }
   },
   created() {
