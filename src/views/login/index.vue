@@ -25,7 +25,7 @@
   </div>
 </template>
 <script>
-import store from "@/store";
+import auth from "@/utils/auth";
 export default {
   name: "app-login",
   data() {
@@ -63,7 +63,7 @@ export default {
               this.loginForm
             )
             .then(res => {
-              store.setUser(res.data.data);
+              auth.setUser(res.data.data);
               this.$router.push("/");
             })
             .catch(() => {

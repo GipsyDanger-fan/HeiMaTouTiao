@@ -6,12 +6,12 @@
         <el-menu
           :collapse="!isOpen"
           :collapse-transition="false"
-          default-active="/"
+          :default-active="$route.path"
           background-color="#545c64"
           text-color="#fff"
           active-text-color="#ffd04b"
           style="border-right:none"
-          router="true"
+          :router="true"
         >
           <el-menu-item index="/">
             <i class="el-icon-s-home"></i>
@@ -47,15 +47,15 @@
         <el-header class="my-header">
           <span @click="clicked" class="icon el-icon-s-fold"></span>
           <span class="text">江苏传智播客科技教育有限公司</span>
-          <el-dropdown class="my-dropdown">
+          <el-dropdown class="my-dropdown" @command="handleCommand">
             <span class="el-dropdown-link">
-              <img class="head" src="../../assets/avatar.jpg" alt />
-              <span class="name">用户名称</span>
+              <img class="head" :src="user.photo" alt />
+              <span class="name">{{user.name}}</span>
               <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>个人设置</el-dropdown-item>
-              <el-dropdown-item>退出登录</el-dropdown-item>
+              <el-dropdown-item command="setting">个人设置</el-dropdown-item>
+              <el-dropdown-item command="logout">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-header>
@@ -67,17 +67,30 @@
   </div>
 </template>
 <script>
+import auth from "@/utils/auth";
 export default {
   name: "app-home",
   data() {
     return {
-      isOpen: "true"
+      isOpen: "true",
+      user: {}
     };
   },
   methods: {
     clicked() {
       this.isOpen = !this.isOpen;
+    },
+    handleCommand(command) {
+      if (command == "logout") {
+        auth.delUser();
+        this.$router.push("/login");
+        return;
+      }
+      this.$router.push("/setting");
     }
+  },
+  created() {
+    this.user = auth.getUser();
   }
 };
 </script>

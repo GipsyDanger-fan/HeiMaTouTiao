@@ -10,7 +10,7 @@ import comment from '@/views/comment'
 import fans from '@/views/fans'
 import setting from '@/views/setting'
 import NotFound from '@/views/NotFound'
-import store from '@/store'
+import auth from '@/utils/auth'
 Vue.use(VueRouter)
 const router = new VueRouter({
   routes: [
@@ -30,7 +30,7 @@ const router = new VueRouter({
   ]
 })
 router.beforeEach((to, from, next) => {
-  if (to.path !== '/login' && !store.getUser().token) return next('/login')
+  if (to.path !== '/login' && !auth.getUser().token) return next('/login')
   next()
 })
 export default router
