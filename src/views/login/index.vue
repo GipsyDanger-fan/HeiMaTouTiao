@@ -11,6 +11,7 @@
             v-model="loginForm.code"
             placeholder="请输入验证码"
             style="width:240px;margin-right:8px"
+            @keyup.enter="login"
           ></el-input>
           <el-button>发送验证码</el-button>
         </el-form-item>
@@ -58,10 +59,7 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.$http
-            .post(
-              "http://ttapi.research.itcast.cn/mp/v1_0/authorizations",
-              this.loginForm
-            )
+            .post("/authorizations", this.loginForm)
             .then(res => {
               auth.setUser(res.data.data);
               this.$router.push("/");
