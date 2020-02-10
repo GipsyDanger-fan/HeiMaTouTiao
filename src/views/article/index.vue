@@ -7,16 +7,15 @@ export default {
   data() {
     return {};
   },
-  created() {
-    this.$http({
+  async created() {
+    const res = await this.$http({
       url: "/search",
       method: "get",
       params: {
         q: "a"
       }
-    }).then(res => {
-      console.log(res.data.data);
     });
+    console.log(res.data.data);
   }
 };
 </script>

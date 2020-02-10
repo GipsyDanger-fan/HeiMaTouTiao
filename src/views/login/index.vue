@@ -56,17 +56,18 @@ export default {
   },
   methods: {
     login() {
-      this.$refs.loginForm.validate(valid => {
+      this.$refs.loginForm.validate(async valid => {
         if (valid) {
-          this.$http
-            .post("/authorizations", this.loginForm)
-            .then(res => {
-              auth.setUser(res.data.data);
-              this.$router.push("/");
-            })
-            .catch(() => {
-              this.$message.error("手机号或验证码错误");
-            });
+          try {
+            const res = await this.$http.post(
+              "/authorizations",
+              this.loginForm
+            );
+            auth.setUser(res.data.data);
+            this.$router.push("/");
+          } catch (e) {
+            this.$message.error("手机号或验证码错误");
+          }
         }
       });
     }
