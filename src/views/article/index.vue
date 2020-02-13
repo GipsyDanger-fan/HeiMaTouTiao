@@ -42,20 +42,43 @@
       </el-form>
     </el-card>
     <el-card style="margin-top:20px">
-      <div slot="header">根据筛选查询到n条数据</div>
+      <div slot="header">根据筛选查询到{{total_count}}条数据</div>
       <el-table :data="tableData">
-        <el-table-column label="封面"></el-table-column>
+        <el-table-column label="封面">
+          <template slot-scope="scope">
+            <el-image :src="scope.row.cover.images[0]" style="width:150px;height:100px">
+              <div slot="error">
+                <img src="../../assets/error.gif" style="width:150px;height:100px" />
+              </div>
+            </el-image>
+          </template>
+        </el-table-column>
         <el-table-column prop="title" label="标题"></el-table-column>
-        <el-table-column label="状态"></el-table-column>
+        <el-table-column label="状态">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.status===0" type="info">草稿</el-tag>
+            <el-tag v-if="scope.row.status===1">待审核</el-tag>
+            <el-tag v-if="scope.row.status===2" type="success">审核通过</el-tag>
+            <el-tag v-if="scope.row.status===3" type="warning">审核失败</el-tag>
+            <el-tag v-if="scope.row.status===4" type="danger">已删除</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="pubdate" label="发布时间"></el-table-column>
-        <el-table-column label="操作"></el-table-column>
+        <el-table-column label="操作">
+          <template>
+            <el-button plain type="primary" icon="el-icon-edit" circle></el-button>
+            <el-button plain type="danger" icon="el-icon-delete" circle></el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <el-pagination
-        style="margin-top:20px;margin-left:20%"
+        style="margin-top:20px;margin-left:27%"
         background
         layout="prev, pager, next"
         :total="total_count"
+        :page-size="filterData.per_page"
         @current-change="pageChange"
+        :current-page="filterData.page"
       ></el-pagination>
     </el-card>
   </div>
