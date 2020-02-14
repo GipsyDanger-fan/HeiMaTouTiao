@@ -3,6 +3,7 @@ import App from './App.vue'
 import ElementUi from 'element-ui'
 import axios from '@/Api'
 import 'element-ui/lib/theme-chalk/index.css'
+import '@/styles/index.less'
 import router from '@/router'
 import MyComponents from '@/utils/MyComponents'
 Vue.use(MyComponents)
