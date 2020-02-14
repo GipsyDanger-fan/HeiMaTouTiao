@@ -16,7 +16,12 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="频道">
-          <el-select v-model="filterData.channel_id" placeholder="请选择">
+          <el-select
+            @change="changeOption"
+            v-model="filterData.channel_id"
+            placeholder="请选择"
+            clearable
+          >
             <el-option
               v-for="item in channelOptions"
               :key="item.id"
@@ -32,12 +37,13 @@
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
-            @change.native="changed"
+            clearable
+            value-format="yyyy-MM-dd"
+            @change="changed"
           ></el-date-picker>
-          <el-button style="margin-left:20px" @click.native="clear" type="primary">清空日期</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button @click.native="commit" type="primary">筛选</el-button>
+          <el-button @click="commit" type="primary">筛选</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -65,9 +71,15 @@
         </el-table-column>
         <el-table-column prop="pubdate" label="发布时间"></el-table-column>
         <el-table-column label="操作">
-          <template>
-            <el-button plain type="primary" icon="el-icon-edit" circle></el-button>
-            <el-button plain type="danger" icon="el-icon-delete" circle></el-button>
+          <template slot-scope="scope">
+            <el-button @click="Edit(scope.row.id)" plain type="primary" icon="el-icon-edit" circle></el-button>
+            <el-button
+              @click="deleted(scope.row.id)"
+              plain
+              type="danger"
+              icon="el-icon-delete"
+              circle
+            ></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -96,44 +108,48 @@ export default {
         page: 1,
         per_page: 20
       },
-      channelOptions: [{ name: "全部", id: null }],
+      channelOptions: [{ name: "全部频道", id: null }],
       pubDate: [],
       tableData: [],
       total_count: 0
     };
   },
-  computed: {
-    getBegin() {
-      var date = new Date(this.pubDate[0]);
-      date = `${date.getFullYear()}-${
-        date.getMonth() + 1 > 10
-          ? date.getMonth() + 1
-          : "0" + (date.getMonth() + 1)
-      }-${date.getDate() > 10 ? date.getDate() : "0" + date.getDate()}`;
-      return date;
-    },
-    getEnd() {
-      var date = new Date(this.pubDate[1]);
-      date = `${date.getFullYear()}-${
-        date.getMonth() + 1 > 10
-          ? date.getMonth() + 1
-          : "0" + (date.getMonth() + 1)
-      }-${date.getDate() > 10 ? date.getDate() : "0" + date.getDate()}`;
-      return date;
-    }
-  },
   methods: {
-    clear() {
-      this.filterData.begin_pubdate = null;
-      this.filterData.end_pubdate = null;
-      this.pubDate.splice(0, 2);
-      this.getArticleList();
+    Edit(id) {
+      this.$router.push(`/publish?id=${id}`);
+    },
+    deleted(id) {
+      this.$confirm("此操作将永久删除该文章, 是否继续?", "温馨提示", {
+        confirmButtonText: "狠心删除",
+        cancelButtonText: "算了",
+        type: "warning"
+      })
+        .then(async () => {
+          try {
+            await this.$http({ url: `/articles/${id}`, method: "delete" });
+            this.$message.success("删除成功!");
+            this.getArticleList();
+          } catch (e) {
+            this.$message.error("删除失败!");
+          }
+        })
+        .catch(() => {});
+    },
+    changed(dateArr) {
+      if (dateArr) {
+        this.filterData.begin_pubdate = dateArr[0];
+        this.filterData.end_pubdate = dateArr[1];
+      } else {
+        this.filterData.begin_pubdate = null;
+        this.filterData.end_pubdate = null;
+      }
+    },
+    changeOption() {
+      if (this.filterData.channel_id == "")
+        return (this.filterData.channel_id = null);
     },
     commit() {
-      if (this.pubDate.length == 2) {
-        this.filterData.begin_pubdate = this.getBegin;
-        this.filterData.end_pubdate = this.getEnd;
-      }
+      this.filterData.page = 1;
       this.getArticleList();
     },
     async getArticleList() {
